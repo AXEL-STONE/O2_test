@@ -14,7 +14,7 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 	"PRODUCT_QUANTITY_VARIABLE" => "quantity",
 	"PRODUCT_PROPS_VARIABLE" => "prop",
 	"SEF_MODE" => "Y",
-	"SEF_FOLDER" => "/catalog/",
+	"SEF_FOLDER" => sefFolderCatalog('#SECTION_CODE#/#ELEMENT_CODE#/'),
 	"AJAX_MODE" => "N",
 	"AJAX_OPTION_JUMP" => "N",
 	"AJAX_OPTION_STYLE" => "Y",
