@@ -3,7 +3,10 @@ use Bitrix\Main,
 	Bitrix\Main\Loader,
 	Bitrix\Iblock\Component\Element,
 	Bitrix\Main\Localization\Loc,
-	Bitrix\Catalog;
+	Bitrix\Catalog,
+    Bitrix\Main\Type\DateTime,
+    Bitrix\Iblock,
+    Bitrix\Main\Config\Option;
 
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 
@@ -22,6 +25,8 @@ class CatalogElementComponent extends Element
 		parent::__construct($component);
 		$this->setExtendedMode(false);
 	}
+
+	private $colorOffer = false;
 
 	/**
 	 * Processing parameters unique to catalog.element component.
@@ -282,4 +287,54 @@ class CatalogElementComponent extends Element
 			Main\Analytics\Counter::sendData('ct', $this->arResult['counterData']);
 		}
 	}
+
+	/*
+	 * дополнение для установки в загловки цвета и данных из модуля
+	 */
+    protected function initMetaData()
+    {
+        $arResult =& $this->arResult;
+
+        if
+        (
+            isset($this->arParams['OFFER_COLOR_SELECTED'])
+            &&
+            !empty($this->arParams['OFFER_COLOR_SELECTED'])
+            &&
+            $this->colorOffer
+        ) {
+            $arResult["META_TAGS"]["TITLE"] .= " ".$this->colorOffer;
+            $arResult["META_TAGS"]["BROWSER_TITLE"] .= " ".$this->colorOffer;
+        }
+
+        if (Loader::includeModule('o2.title')) {
+            $h1Template = Option::get('o2.title', 'h1_template');
+            $titleTemplate = Option::get('o2.title', 'title_template');
+
+            if(stripos($h1Template, '#H1#') !== false) {
+                $arResult["META_TAGS"]["TITLE"] = str_replace('#H1#', $arResult["META_TAGS"]["TITLE"], $h1Template);
+            }
+            if(stripos($titleTemplate, '#TITLE#') !== false) {
+                $arResult["META_TAGS"]["BROWSER_TITLE"] = str_replace('#TITLE#', $arResult["META_TAGS"]["BROWSER_TITLE"], $titleTemplate);
+            }
+        }
+
+        parent::initMetaData();
+    }
+
+    /*
+     * дополнение для получения названия выбранного цвета (с последующей установкой в initMetaData())
+     */
+    protected function editTemplateItems(&$item)
+    {
+        parent::editTemplateItems($item);
+        foreach ($this->arResult['SKU_PROPS'] as $skuProperty) {
+            foreach ($skuProperty['VALUES'] as $value){
+                $nameTranslit = \Cutil::translit($value['NAME'], 'ru', ['replace_space' => '-', 'replace_other' => '-']);
+                if($nameTranslit == $this->arParams['OFFER_COLOR_SELECTED']) {
+                    $this->colorOffer = $value['NAME'];
+                }
+            }
+        }
+    }
 }
