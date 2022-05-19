@@ -199,6 +199,9 @@
 
 		this.errorCode = 0;
 
+		this.selectedAttribute = false;
+		this.selectedItem = false;
+
 		if (typeof arParams === 'object')
 		{
 			this.params = arParams;
@@ -617,6 +620,14 @@
 							}
 						}
 
+                        for (i = 0; i < treeItems.length; i++)
+                        {
+                            this.selectedAttribute = treeItems[i].getAttribute('data-selected');
+                            if(this.selectedAttribute == 'Y') {
+                                this.selectedItem = treeItems[i];
+                                this.selectOfferProp();
+                            }
+                        }
 						this.setCurrent();
 						break;
 				}
@@ -2127,6 +2138,11 @@
 				target = BX.proxy_context,
 				smallCardItem;
 
+			if(this.selectedItem !== false) {
+                target = this.selectedItem;
+                this.selectedItem = false;
+            }
+
 			if (target && target.hasAttribute('data-treevalue'))
 			{
 				if (BX.hasClass(target, 'selected'))
@@ -2601,7 +2617,7 @@
 
 				eventData.newId = this.offers[this.offerNum].ID;
 				// only for compatible catalog.store.amount custom templates
-				BX.onCustomEvent('onCatalogStoreProductChange', [this.offers[this.offerNum].ID]);
+				// BX.onCustomEvent('onCatalogStoreProductChange', [this.offers[this.offerNum].ID]);
 				// new event
 				BX.onCustomEvent('onCatalogElementChangeOffer', [eventData]);
 				eventData = null;

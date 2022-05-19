@@ -51,6 +51,10 @@ $isSidebarLeft = isset($arParams['SIDEBAR_SECTION_POSITION']) && $arParams['SIDE
 		}
 
 		$componentElementParams = array(
+            "AJAX_MODE" => "Y",
+            "AJAX_OPTION_JUMP" => "N",
+            "AJAX_OPTION_STYLE" => "Y",
+            "AJAX_OPTION_HISTORY" => "Y",
 			'IBLOCK_TYPE' => $arParams['IBLOCK_TYPE'],
 			'IBLOCK_ID' => $arParams['IBLOCK_ID'],
 			'PROPERTY_CODE' => (isset($arParams['DETAIL_PROPERTY_CODE']) ? $arParams['DETAIL_PROPERTY_CODE'] : []),
@@ -218,7 +222,12 @@ $isSidebarLeft = isset($arParams['SIDEBAR_SECTION_POSITION']) && $arParams['SIDE
 			$componentElementParams['USER_CONSENT_IS_LOADED'] = $arParams['USER_CONSENT_IS_LOADED'];
 		}
 
-		$elementId = $APPLICATION->IncludeComponent('bitrix:catalog.element', 'bootstrap_v4', $componentElementParams,
+		if(isset($color))
+        {
+            $componentElementParams['OFFER_COLOR_SELECTED'] = $color;
+        }
+
+		$elementId = $APPLICATION->IncludeComponent('demo:catalog.element', 'bootstrap_v4', $componentElementParams,
 			$component
 		);
 
