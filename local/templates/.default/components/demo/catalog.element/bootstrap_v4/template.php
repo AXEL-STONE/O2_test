@@ -362,15 +362,27 @@ $themeClass = isset($arParams['TEMPLATE_THEME']) ? ' bx-'.$arParams['TEMPLATE_TH
 
 																		if ($skuProperty['SHOW_MODE'] === 'PICT')
 																		{
+                                                                            $translitName = Cutil::translit($value['NAME'], 'ru', ['replace_space' => '-', 'replace_other' => '-']);
+																		    if($value['NAME'] == '-') {
+                                                                                $href = $arResult['DETAIL_PAGE_URL'];
+                                                                            } else {
+                                                                                $href = str_replace('//', '/', $arResult['DETAIL_PAGE_URL'] . '/' . $translitName . '/');
+                                                                            }
 																			?>
 																			<li class="product-item-scu-item-color-container" title="<?=$value['NAME']?>"
 																				data-treevalue="<?=$propertyId?>_<?=$value['ID']?>"
-																				data-onevalue="<?=$value['ID']?>">
-																				<div class="product-item-scu-item-color-block">
-																					<div class="product-item-scu-item-color" title="<?=$value['NAME']?>"
-																						style="background-image: url('<?=$value['PICT']['SRC']?>');">
-																					</div>
-																				</div>
+																				data-onevalue="<?=$value['ID']?>"
+                                                                                data-selected="<?php if($translitName == $arParams['OFFER_COLOR_SELECTED']): ?>Y<?php endif; ?>"
+
+                                                                                onclick="BX.ajax.insertToNode('<?=$href?>?bxajaxid=<?=$component->arParams['AJAX_ID']?>', 'comp_<?=$component->arParams['AJAX_ID']?>'); return false;"
+                                                                                >
+                                                                                <a href="<?=$href?>">
+                                                                                    <div class="product-item-scu-item-color-block">
+                                                                                        <div class="product-item-scu-item-color" title="<?=$value['NAME']?>"
+                                                                                            style="background-image: url('<?=$value['PICT']['SRC']?>');">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </a>
 																			</li>
 																			<?php
 																		}
